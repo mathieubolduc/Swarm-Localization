@@ -45,6 +45,8 @@ public class BroydenSwarm {
 			jFlatArray[i] = jArray[i / jArray.length][i % jArray.length];
 		}
 		Matrix J = new Matrix(jFlatArray, this.x.length, this.x.length);
+
+		System.out.println(J);
 		
 		
 		Matrix Δx = new Matrix(this.x.length, 1);
@@ -60,11 +62,6 @@ public class BroydenSwarm {
 		
 		while(true){
 			
-			// calculate the inverse jacobian      Jn   =   Jn-1   +  ( Δxn  -  Jn-1 * Δfn ) / ( Δxn^T * Jn-1 * Δfn ) * Δxn^T * Jn-1
-			
-			Matrix.multiplyTransposeA(Δx, J, intermediate);
-			J.addSelf((Δx.subtract(J.multiply(Δf)).multiply(intermediate.multiply(Δf).getEntry(0, 0))).multiply(intermediate));
-			
 			// calculate the new values          xn+1 = xn - Jn * f(xn)
 			oldX.clone(x);
 			x.subtractSelf(J.multiply(oldF));
@@ -72,6 +69,12 @@ public class BroydenSwarm {
 			f.clone(f(x));
 			Matrix.subtract(f, oldF, Δf);
 			oldF.clone(f);
+			
+			
+			// calculate the inverse jacobian      Jn   =   Jn-1   +  ( Δxn  -  Jn-1 * Δfn ) / ( Δxn^T * Jn-1 * Δfn ) * Δxn^T * Jn-1
+			
+			Matrix.multiplyTransposeA(Δx, J, intermediate);
+			J.addSelf((Δx.subtract(J.multiply(Δf)).multiply(intermediate.multiply(Δf).getEntry(0, 0))).multiply(intermediate));
 			
 			scan.nextLine();
 			System.out.println(J);
